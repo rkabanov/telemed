@@ -21,8 +21,7 @@ func NewWebAPI(a App) *WebAPI {
 }
 
 func (wa *WebAPI) GetPatient(w http.ResponseWriter, r *http.Request) {
-	var id PatientID
-	id = PatientID(r.FormValue("id"))
+	var id PatientID = PatientID(r.FormValue("id"))
 	p, err := wa.app.GetPatient(id)
 	if err == ErrorPatientNotFound {
 		w.WriteHeader(http.StatusNotFound)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"slices"
 )
 
 type MemStore struct {
@@ -39,12 +40,19 @@ func (ms *MemStore) GetPatient(id PatientID) (*Patient, error) {
 }
 
 func (ms *MemStore) GetPatients() ([]Patient, error) {
-	result := make([]Patient, len(ms.data))
+	keys := make([]PatientID, len(ms.data))
 	i := 0
-	for _, p := range ms.data {
-		result[i] = p
+	for key := range ms.data {
+		keys[i] = key
 		i++
 	}
-	// TODO: sort by ID
+
+	slices.Sort(keys)
+
+	result := make([]Patient, len(ms.data))
+	for i, key := range keys {
+		result[i] = ms.data[key]
+	}
+
 	return result, nil
 }
