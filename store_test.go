@@ -22,6 +22,13 @@ func init() {
 	})
 }
 
+func TestNextPatientID(t *testing.T) {
+	id, err := testMemStore.NextPatientID()
+	require.NoError(t, err)
+	require.NotEmpty(t, id)
+	require.Equal(t, id, "3")
+}
+
 func TestGetPatient(t *testing.T) {
 	p, err := testMemStore.GetPatient("1")
 	require.NoError(t, err)
@@ -39,4 +46,26 @@ func TestGetPatients(t *testing.T) {
 	require.Equal(t, 2, len(list))
 	require.Equal(t, PatientID("1"), list[0].ID)
 	require.Equal(t, PatientID("2"), list[1].ID)
+}
+
+func TestCreatePatient(t *testing.T) {
+	p := Patient{
+		ID:       "",
+		Name:     "Charles",
+		Age:      21,
+		External: true,
+	}
+
+	newID, err := testMemStore.CreatePatient(p)
+	require.NoError(t, err)
+	require.NotEmpty(t, newID)
+
+	var newP Patient
+	newP, err = testMemStore.GetPatient(newID)
+	require.NoError(t, err)
+	require.NotEmpty(t, newP)
+	require.Equal(t, newP.ID, newID)
+	require.Equal(t, newP.Name, p.Name)
+	require.Equal(t, newP.Age, p.Age)
+	require.Equal(t, newP.External, p.External)
 }

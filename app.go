@@ -10,9 +10,9 @@ type Patient struct {
 }
 
 type Store interface {
-	GetPatient(PatientID) (*Patient, error)
+	GetPatient(PatientID) (Patient, error)
 	GetPatients() ([]Patient, error)
-	// CreatePatient(*Patient) (*Patient, error)
+	CreatePatient(Patient) (PatientID, error)
 }
 
 type PatientApp struct {
@@ -25,18 +25,14 @@ func NewApp(s Store) *PatientApp {
 	}
 }
 
-func (app *PatientApp) GetPatient(id PatientID) (*Patient, error) {
-	p, err := app.store.GetPatient(id)
-	if err != nil {
-		return nil, err
-	}
-	return p, nil
+func (app *PatientApp) GetPatient(id PatientID) (Patient, error) {
+	return app.store.GetPatient(id)
 }
 
 func (app *PatientApp) GetPatients() ([]Patient, error) {
-	res, err := app.store.GetPatients()
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
+	return app.store.GetPatients()
+}
+
+func (app *PatientApp) CreatePatient(p Patient) (PatientID, error) {
+	return app.store.CreatePatient(p)
 }
