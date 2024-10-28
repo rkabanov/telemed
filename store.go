@@ -85,47 +85,49 @@ func (ms *MemStore) CreatePatient(p Patient) (PatientID, error) {
 	return p.ID, nil
 }
 
-func (ms *MemStore) NextPatientID() (PatientID, error) {
-	log.Println("NextPatientID")
-	var maxid PatientID = ""
-	for key := range ms.data {
-		if key > PatientID(maxid) {
-			maxid = key
-		}
-	}
-	if maxid == "" {
-		maxid = "0"
-	}
-	log.Println("NextPatientID: maxid=", maxid)
-
+func extractNumberFromID(id PatientID) int {
 	// filter digits
 	var sb strings.Builder
-	for i, r := range string(maxid) {
-		log.Println("NextPatientID: i=", i, ", rune=", r)
+	for i, r := range string(id) {
+		log.Println("extractNumberFromID: i=", i, ", rune=", r)
 		if r >= '0' && r <= '9' {
 			sb.WriteRune(r)
-			// digits = append(digits, byte(ch))
 		}
 	}
 	digits := sb.String()
 	if len(digits) == 0 {
-		digits = "0"
+		return 0
 	}
-	log.Println("NextPatientID: digits=", string(digits))
+	log.Println("extractNumberFromID: digits=", string(digits))
 
 	// convert to number
 	num, err := strconv.Atoi(digits)
 	if err != nil {
 		log.Println("NextPatientID: ERROR:", err)
-		return "", ErrorNextPatientID
+		return 0
 	}
-	log.Println("NextPatientID: num=", num)
+
+	return num
+}
+
+func (ms *MemStore) NextPatientID() (PatientID, error) {
+	log.Println("NextPatientID")
+	// Make numeric representation of IDs.
+	// numIDs := make([]int, len(ms.data))
+	maxid := 0
+	for key := range ms.data {
+		numID := extractNumberFromID(key)
+		if numID > maxid {
+			maxid = numID
+		}
+	}
+	log.Println("NextPatientID: maxid=", maxid)
 
 	// make the next ID - increase the number by 1
-	num++
+	maxid++
 
 	// convert the number to string
-	newID := strconv.Itoa(num)
+	newID := strconv.Itoa(maxid)
 	log.Println("NextPatientID: newID=", newID)
 	return PatientID(newID), nil
 }

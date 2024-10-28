@@ -26,7 +26,7 @@ func TestNextPatientID(t *testing.T) {
 	id, err := testMemStore.NextPatientID()
 	require.NoError(t, err)
 	require.NotEmpty(t, id)
-	require.Equal(t, id, "3")
+	require.Equal(t, id, PatientID("3"))
 }
 
 func TestGetPatient(t *testing.T) {
