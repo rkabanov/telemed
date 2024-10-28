@@ -21,7 +21,7 @@ func main() {
 
 	web := NewWebAPI(app)
 
-	http.HandleFunc("/patient", web.GetPatient)
+	http.HandleFunc("/patient", web.HandlePatient) // GET and POST
 	http.HandleFunc("/patients", web.GetPatients)
 	log.Println(http.ListenAndServe(":8180", nil))
 

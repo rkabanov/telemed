@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -20,6 +21,23 @@ type WebAPI struct {
 func NewWebAPI(a App) *WebAPI {
 	return &WebAPI{
 		app: a,
+	}
+}
+
+func (wa *WebAPI) HandlePatient(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		log.Println("HandlePatient GET")
+		wa.GetPatient(w, r)
+	case http.MethodPost:
+		log.Println("HandlePatient POST")
+		wa.CreatePatient(w, r)
+	case http.MethodPut:
+		// Update an existing record.
+	case http.MethodDelete:
+		// Remove the record.
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
