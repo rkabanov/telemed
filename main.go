@@ -8,21 +8,30 @@ import (
 func main() {
 	log.Println("start")
 
-	store := NewMemStore([]Patient{
+	patStore := NewPatientStore([]Patient{
 		{ID: "1001", Name: "Ann", Age: 20, External: false},
 		{ID: "1002", Name: "Bob", Age: 21, External: true},
 		{ID: "1003", Name: "Chris", Age: 22, External: false},
 		{ID: "1004", Name: "Donna", Age: 23, External: true},
 		{ID: "1005", Name: "Emma", Age: 24, External: false},
 	})
-	store.Print()
+	patStore.Print()
 
-	app := NewApp(store)
+	docStore := NewDoctorStore([]Doctor{
+		{ID: "9001", Name: "Dr. Paul", Email: "paul@yopmail.com", Role: "radiologist", Speciality: "dermatology"},
+		{ID: "9002", Name: "Dr. Smith", Email: "smith@yopmail.com", Role: "admin", Speciality: ""},
+		{ID: "9003", Name: "Dr. Tucker", Email: "tucker@yopmail.com", Role: "nurse", Speciality: ""},
+	})
+	patStore.Print()
+
+	app := NewAppStore(patStore, docStore)
 
 	web := NewWebAPI(app)
 
 	http.HandleFunc("/patient", web.HandlePatient) // GET and POST
 	http.HandleFunc("/patients", web.GetPatients)
+	http.HandleFunc("/doctor", web.HandleDoctor) // GET and POST
+	http.HandleFunc("/doctors", web.GetDoctors)
 	log.Println(http.ListenAndServe(":8180", nil))
 
 	log.Println("finish")
