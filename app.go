@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type PatientID string
 
@@ -57,33 +60,37 @@ func (app *MedicalApp) CreatePatient(p Patient) (PatientID, error) {
 }
 
 func (app *MedicalApp) GetDoctor(id DoctorID) (Doctor, error) {
+	log.Printf("MedicalApp.GetDoctor %v", id)
 	return app.store.GetDoctor(id)
 }
 
 func (app *MedicalApp) GetDoctors() ([]Doctor, error) {
+	log.Printf("MedicalApp.GetDoctors")
 	return app.store.GetDoctors()
 }
 
 func (app *MedicalApp) CreateDoctor(d Doctor) (DoctorID, error) {
+	log.Printf("MedicalApp.CreateDoctor: %+v", d)
 	if d.ID != "" {
-		return "", fmt.Errorf("%w: ID", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: ID=[%v]", ErrorInvalidDoctorData, d.ID)
 	}
 	if d.Name == "" {
-		return "", fmt.Errorf("%w: Name", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Name=[%v]", ErrorInvalidDoctorData, d.Name)
 	}
 	if d.Email == "" {
-		return "", fmt.Errorf("%w: Email", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Email=[%v]", ErrorInvalidDoctorData, d.Email)
 	}
 	if d.Role == "" || !ValidDoctorRole(d.Role) {
-		return "", fmt.Errorf("%w: Role", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Role=[%v]", ErrorInvalidDoctorData, d.Role)
 	}
 	if d.Speciality != "" && !ValidDoctorSpeciality(d.Speciality) {
-		return "", fmt.Errorf("%w: Speciality", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Speciality=[%v]", ErrorInvalidDoctorData, d.Speciality)
 	}
 	if d.Role == "admin" && d.Speciality != "" {
-		return "", fmt.Errorf("%w: Role, Speciality", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Role=admin, Speciality=[%v]", ErrorInvalidDoctorData, d.Speciality)
 	}
 
+	log.Printf(">> MedicalApp.CreateDoctor: %+v, call store.CreateDoctor", d)
 	return app.store.CreateDoctor(d)
 }
 

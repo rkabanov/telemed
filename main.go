@@ -22,11 +22,13 @@ func main() {
 		{ID: "9002", Name: "Dr. Smith", Email: "smith@yopmail.com", Role: "admin", Speciality: ""},
 		{ID: "9003", Name: "Dr. Tucker", Email: "tucker@yopmail.com", Role: "nurse", Speciality: ""},
 	})
-	patStore.Print()
+	docStore.Print()
 
-	app := NewAppStore(patStore, docStore)
+	store := NewAppStore(patStore, docStore) // Common store - depends on individual stores.
 
-	web := NewWebAPI(app)
+	app := NewApp(store) // Business logic - depends on common store (or on all individual stores?).
+
+	web := NewWebAPI(app) // Web API for the app - depends on business logic.
 
 	http.HandleFunc("/patient", web.HandlePatient) // GET and POST
 	http.HandleFunc("/patients", web.GetPatients)
