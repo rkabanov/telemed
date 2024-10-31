@@ -9,15 +9,17 @@ import (
 	"github.com/rkabanov/service/web"
 )
 
+var buildDate string
+
 func main() {
-	log.Println("start")
+	log.Println("start, build:", buildDate)
 
 	patStore := store.NewPatientStore([]store.PatientRecord{
-		{ID: "1001", Name: "Ann", Age: 20, External: false},
-		{ID: "1002", Name: "Bob", Age: 21, External: true},
-		{ID: "1003", Name: "Chris", Age: 22, External: false},
-		{ID: "1004", Name: "Donna", Age: 23, External: true},
-		{ID: "1005", Name: "Emma", Age: 24, External: false},
+		{ID: "1001", Name: "Evelynn Lang", Age: 20, External: false},
+		{ID: "1002", Name: "Wells Maldonado", Age: 21, External: true},
+		{ID: "1003", Name: "Elaina Davis", Age: 22, External: false},
+		{ID: "1004", Name: "Lucas Wright", Age: 23, External: true},
+		{ID: "1005", Name: "Lily Contreras", Age: 24, External: false},
 	})
 	patStore.Print()
 
