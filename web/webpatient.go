@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/rkabanov/service/app"
 )
 
 func (wa *WebAPI) HandlePatient(w http.ResponseWriter, r *http.Request) {
@@ -27,9 +29,9 @@ func (wa *WebAPI) HandlePatient(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wa *WebAPI) GetPatient(w http.ResponseWriter, r *http.Request) {
-	var id PatientID = PatientID(r.FormValue("id"))
+	var id app.PatientID = app.PatientID(r.FormValue("id"))
 	p, err := wa.app.GetPatient(id)
-	if err == ErrorPatientNotFound {
+	if err == app.ErrorPatientNotFound {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -67,11 +69,11 @@ func (wa *WebAPI) GetPatients(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wa *WebAPI) CreatePatient(w http.ResponseWriter, r *http.Request) {
-	var p Patient
+	var p app.Patient
 	var err error
 
 	// Here we check only that args have correct types.
-	p.ID = PatientID(r.FormValue("id"))
+	p.ID = app.PatientID(r.FormValue("id"))
 	p.Name = r.FormValue("name")
 
 	p.Age, err = strconv.Atoi(r.FormValue("age"))
@@ -88,7 +90,7 @@ func (wa *WebAPI) CreatePatient(w http.ResponseWriter, r *http.Request) {
 
 	p.ID, err = wa.app.CreatePatient(p)
 	if err != nil {
-		if errors.Is(err, ErrorInvalidPatientData) {
+		if errors.Is(err, app.ErrorInvalidPatientData) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

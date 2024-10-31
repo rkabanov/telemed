@@ -1,4 +1,4 @@
-package main
+package store
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 )
 
 type PatientStore struct {
-	data map[PatientID]Patient
+	data map[string]PatientRecord
 }
 
 var ErrorPatientNotFound = errors.New("patient not found")
@@ -19,50 +19,50 @@ var ErrorNextPatientID = errors.New("failed to get next patient ID")
 // Errors for fields validation.
 var ErrorInvalidPatientData = errors.New("invalid patient data")
 
-func NewPatientStore(list []Patient) *PatientStore {
-	ms := PatientStore{
-		data: make(map[PatientID]Patient, len(list)),
+func NewPatientStore(list []PatientRecord) *PatientStore {
+	store := PatientStore{
+		data: make(map[string]PatientRecord, len(list)),
 	}
 	for _, p := range list {
-		ms.data[p.ID] = p
+		store.data[p.ID] = p
 	}
 
-	return &ms
+	return &store
 }
 
-func (ms *PatientStore) Print() {
-	for _, p := range ms.data {
+func (store *PatientStore) Print() {
+	for _, p := range store.data {
 		log.Printf("print: %v", p)
 	}
 }
 
-func (ms *PatientStore) GetPatient(id PatientID) (Patient, error) {
-	p, ok := ms.data[id]
+func (store *PatientStore) GetPatient(id string) (PatientRecord, error) {
+	p, ok := store.data[id]
 	if !ok {
-		return Patient{}, ErrorPatientNotFound
+		return PatientRecord{}, ErrorPatientNotFound
 	}
 	return p, nil
 }
 
-func (ms *PatientStore) GetPatients() ([]Patient, error) {
-	keys := make([]PatientID, len(ms.data))
+func (store *PatientStore) GetPatients() ([]PatientRecord, error) {
+	keys := make([]string, len(store.data))
 	i := 0
-	for key := range ms.data {
+	for key := range store.data {
 		keys[i] = key
 		i++
 	}
 
 	slices.Sort(keys)
 
-	result := make([]Patient, len(ms.data))
+	result := make([]PatientRecord, len(store.data))
 	for i, key := range keys {
-		result[i] = ms.data[key]
+		result[i] = store.data[key]
 	}
 
 	return result, nil
 }
 
-func (ms *PatientStore) CreatePatient(p Patient) (PatientID, error) {
+func (store *PatientStore) CreatePatient(p PatientRecord) (string, error) {
 	log.Println("PatientStore.CreatePatient")
 	if p.ID != "" {
 		return "", fmt.Errorf("%w: ID", ErrorInvalidPatientData)
@@ -75,16 +75,16 @@ func (ms *PatientStore) CreatePatient(p Patient) (PatientID, error) {
 	}
 
 	var err error
-	p.ID, err = ms.NextPatientID()
+	p.ID, err = store.NextPatientID()
 	if err != nil {
 		return "", err
 	}
 
-	ms.data[p.ID] = p
+	store.data[p.ID] = p
 	return p.ID, nil
 }
 
-func extractNumberFromID(id PatientID) int {
+func extractNumberFromID(id string) int {
 	// filter digits
 	var sb strings.Builder
 	for _, r := range string(id) {
@@ -106,10 +106,10 @@ func extractNumberFromID(id PatientID) int {
 	return num
 }
 
-func (ms *PatientStore) NextPatientID() (PatientID, error) {
+func (store *PatientStore) NextPatientID() (string, error) {
 	// Make numeric representation of IDs.
 	maxid := 0
-	for key := range ms.data {
+	for key := range store.data {
 		numID := extractNumberFromID(key)
 		if numID > maxid {
 			maxid = numID
@@ -121,5 +121,5 @@ func (ms *PatientStore) NextPatientID() (PatientID, error) {
 
 	// convert the number to string
 	newID := strconv.Itoa(maxid)
-	return PatientID(newID), nil
+	return newID, nil
 }

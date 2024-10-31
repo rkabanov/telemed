@@ -1,18 +1,12 @@
-package main
+package app
 
 import (
+	"errors"
 	"fmt"
 	"log"
+
+	"github.com/rkabanov/service/store"
 )
-
-type PatientID string
-
-type Patient struct {
-	ID       PatientID `json:"id"`
-	Name     string    `json:"name"`
-	Age      int       `json:"age"`
-	External bool      `json:"external"`
-}
 
 type DoctorID string
 
@@ -27,46 +21,45 @@ type Doctor struct {
 var DoctorRoles = [...]string{"radiologist", "technician", "nurse", "admin"}
 var DoctorSpecialities = []string{"general", "dermatology", "neurology", "cardiology", ""}
 
-type Store interface {
-	GetPatient(PatientID) (Patient, error)
-	GetPatients() ([]Patient, error)
-	CreatePatient(Patient) (PatientID, error)
-
-	GetDoctor(DoctorID) (Doctor, error)
-	GetDoctors() ([]Doctor, error)
-	CreateDoctor(Doctor) (DoctorID, error)
-}
-
-type MedicalApp struct {
-	store Store
-}
-
-func NewApp(s Store) *MedicalApp {
-	return &MedicalApp{
-		store: s,
-	}
-}
-
-func (app *MedicalApp) GetPatient(id PatientID) (Patient, error) {
-	return app.store.GetPatient(id)
-}
-
-func (app *MedicalApp) GetPatients() ([]Patient, error) {
-	return app.store.GetPatients()
-}
-
-func (app *MedicalApp) CreatePatient(p Patient) (PatientID, error) {
-	return app.store.CreatePatient(p)
-}
+// Application level errors.
+var ErrorDoctorNotFound = errors.New("doctor not found")
+var ErrorInvalidDoctorData = errors.New("invalid doctor data")
 
 func (app *MedicalApp) GetDoctor(id DoctorID) (Doctor, error) {
 	log.Printf("MedicalApp.GetDoctor %v", id)
-	return app.store.GetDoctor(id)
+	d, err := app.store.GetDoctor(string(id))
+	if err != nil {
+		return Doctor{}, fmt.Errorf("MedicalApp.GetDoctor failed: %w", err)
+	}
+
+	return Doctor{
+		ID:         DoctorID(d.ID),
+		Name:       d.Name,
+		Email:      d.Email,
+		Role:       d.Role,
+		Speciality: d.Speciality,
+	}, nil
 }
 
 func (app *MedicalApp) GetDoctors() ([]Doctor, error) {
 	log.Printf("MedicalApp.GetDoctors")
-	return app.store.GetDoctors()
+	list, err := app.store.GetDoctors()
+	if err != nil {
+		return []Doctor{}, fmt.Errorf("MedicalApp.GetDoctors failed: %w", err)
+	}
+
+	result := make([]Doctor, len(list))
+	for i, d := range list {
+		result[i] = Doctor{
+			ID:         DoctorID(d.ID),
+			Name:       d.Name,
+			Email:      d.Email,
+			Role:       d.Role,
+			Speciality: d.Speciality,
+		}
+	}
+
+	return result, nil
 }
 
 func (app *MedicalApp) CreateDoctor(d Doctor) (DoctorID, error) {
@@ -91,7 +84,17 @@ func (app *MedicalApp) CreateDoctor(d Doctor) (DoctorID, error) {
 	}
 
 	log.Printf(">> MedicalApp.CreateDoctor: %+v, call store.CreateDoctor", d)
-	return app.store.CreateDoctor(d)
+	id, err := app.store.CreateDoctor(store.DoctorRecord{
+		Name:       d.Name,
+		Email:      d.Email,
+		Role:       d.Role,
+		Speciality: d.Speciality,
+	})
+	if err != nil {
+		return "", fmt.Errorf("MedicalApp.CreateDoctor failed: %w", err)
+	}
+
+	return DoctorID(id), nil
 }
 
 func ValidDoctorRole(role string) bool {

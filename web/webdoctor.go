@@ -1,10 +1,12 @@
-package main
+package web
 
 import (
 	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
+
+	"github.com/rkabanov/service/app"
 )
 
 func (wa *WebAPI) HandleDoctor(w http.ResponseWriter, r *http.Request) {
@@ -26,9 +28,9 @@ func (wa *WebAPI) HandleDoctor(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wa *WebAPI) GetDoctor(w http.ResponseWriter, r *http.Request) {
-	var id DoctorID = DoctorID(r.FormValue("id"))
+	var id app.DoctorID = app.DoctorID(r.FormValue("id"))
 	d, err := wa.app.GetDoctor(id)
-	if err == ErrorDoctorNotFound {
+	if err == app.ErrorDoctorNotFound {
 		log.Printf("ERROR: %v", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -70,11 +72,11 @@ func (wa *WebAPI) GetDoctors(w http.ResponseWriter, r *http.Request) {
 
 func (wa *WebAPI) CreateDoctor(w http.ResponseWriter, r *http.Request) {
 	log.Printf("WebAPI.CreateDoctor")
-	var d Doctor
+	var d app.Doctor
 	var err error
 
 	// Here we check only that args have correct types.
-	d.ID = DoctorID(r.FormValue("id"))
+	d.ID = app.DoctorID(r.FormValue("id"))
 	d.Name = r.FormValue("name")
 	d.Email = r.FormValue("email")
 	d.Role = r.FormValue("role")
@@ -84,7 +86,7 @@ func (wa *WebAPI) CreateDoctor(w http.ResponseWriter, r *http.Request) {
 	d.ID, err = wa.app.CreateDoctor(d) // store method is called!
 	if err != nil {
 		var status int
-		if errors.Is(err, ErrorInvalidDoctorData) {
+		if errors.Is(err, app.ErrorInvalidDoctorData) {
 			status = http.StatusBadRequest
 		} else {
 			status = http.StatusInternalServerError

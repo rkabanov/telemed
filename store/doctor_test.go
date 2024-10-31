@@ -1,4 +1,4 @@
-package main
+package store
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 var testDoctorStore *DoctorStore
 
 func init() {
-	testDoctorStore = NewDoctorStore([]Doctor{
+	testDoctorStore = NewDoctorStore([]DoctorRecord{
 		{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
 		{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
 	})
@@ -20,14 +20,14 @@ func TestNextDoctorID(t *testing.T) {
 	id, err := testDoctorStore.NextDoctorID()
 	require.NoError(t, err)
 	require.NotEmpty(t, id)
-	require.Equal(t, id, DoctorID("23"))
+	require.Equal(t, id, "23")
 }
 
 func TestGetDoctor(t *testing.T) {
 	d, err := testDoctorStore.GetDoctor("11")
 	require.NoError(t, err)
 	require.NotEmpty(t, d)
-	require.Equal(t, DoctorID("11"), d.ID)
+	require.Equal(t, "11", d.ID)
 	require.Equal(t, "Dr. John", d.Name)
 	require.Equal(t, "john@yopmail.com", d.Email)
 	require.Equal(t, "radiologist", d.Role)
@@ -39,12 +39,12 @@ func TestGetDoctors(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, list)
 	require.Equal(t, 2, len(list))
-	require.Equal(t, DoctorID("11"), list[0].ID)
-	require.Equal(t, DoctorID("22"), list[1].ID)
+	require.Equal(t, "11", list[0].ID)
+	require.Equal(t, "22", list[1].ID)
 }
 
 func TestCreateDoctor(t *testing.T) {
-	d := Doctor{
+	d := DoctorRecord{
 		ID:         "",
 		Name:       "Dr. Charles",
 		Email:      "charles@yopmail.com",
@@ -56,15 +56,15 @@ func TestCreateDoctor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, newID)
 
-	var newP Doctor
-	newP, err = testDoctorStore.GetDoctor(newID)
+	var newDoc DoctorRecord
+	newDoc, err = testDoctorStore.GetDoctor(newID)
 	require.NoError(t, err)
-	require.NotEmpty(t, newP)
-	require.Equal(t, newP.ID, newID)
-	require.Equal(t, newP.Name, d.Name)
-	require.Equal(t, newP.Email, d.Email)
-	require.Equal(t, newP.Role, d.Role)
-	require.Equal(t, newP.Speciality, d.Speciality)
+	require.NotEmpty(t, newDoc)
+	require.Equal(t, newDoc.ID, newID)
+	require.Equal(t, newDoc.Name, d.Name)
+	require.Equal(t, newDoc.Email, d.Email)
+	require.Equal(t, newDoc.Role, d.Role)
+	require.Equal(t, newDoc.Speciality, d.Speciality)
 
 	log.Printf("TestCreateDoctor: docStore: %v", testDoctorStore)
 }
