@@ -13,7 +13,7 @@ import (
 func (ms *MemStore) GetDoctor(id string) (store.DoctorRecord, error) {
 	d, ok := ms.doctors[id]
 	if !ok {
-		return store.DoctorRecord{}, ErrorDoctorNotFound
+		return store.DoctorRecord{}, store.ErrorDoctorNotFound
 	}
 	return d, nil
 }
@@ -40,16 +40,16 @@ func (ms *MemStore) GetDoctors() ([]store.DoctorRecord, error) {
 func (ms *MemStore) CreateDoctor(d store.DoctorRecord) (string, error) {
 	log.Println("MemStore.CreateDoctor")
 	if d.ID != "" {
-		return "", fmt.Errorf("%w: ID", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: ID", store.ErrorInvalidDoctorData)
 	}
 	if d.Name == "" {
-		return "", fmt.Errorf("%w: Name", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Name", store.ErrorInvalidDoctorData)
 	}
 	if d.Email == "" {
-		return "", fmt.Errorf("%w: Email", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Email", store.ErrorInvalidDoctorData)
 	}
 	if d.Role == "" {
-		return "", fmt.Errorf("%w: Role", ErrorInvalidDoctorData)
+		return "", fmt.Errorf("%w: Role", store.ErrorInvalidDoctorData)
 	}
 
 	var err error

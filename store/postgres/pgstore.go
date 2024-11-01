@@ -6,22 +6,22 @@ import (
 	"time"
 )
 
-type PGStore struct {
+type PostgresStore struct {
 	db *sql.DB
 }
 
-func New(db *sql.DB) *PGStore {
-	return &PGStore{
+func New(db *sql.DB) *PostgresStore {
+	return &PostgresStore{
 		db: db,
 	}
 }
 
-func (store *PGStore) Now() (time.Time, error) {
-	row := store.db.QueryRow("select now()")
+func (ps *PostgresStore) Now() (time.Time, error) {
+	row := ps.db.QueryRow("select now()")
 	var now time.Time
 	err := row.Scan(&now)
 	if err != nil {
-		log.Println("PGStore.Test", err)
+		log.Println("PostgresStore.Test", err)
 	}
 	return now, err
 }

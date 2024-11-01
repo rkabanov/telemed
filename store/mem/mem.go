@@ -1,7 +1,7 @@
 package mem
 
 import (
-	"errors"
+	// "errors"
 	"log"
 	"strconv"
 	"strings"
@@ -9,36 +9,21 @@ import (
 	"github.com/rkabanov/service/store"
 )
 
-// type PatientRecord struct {
-// 	ID       string `json:"id"`
-// 	Name     string `json:"name"`
-// 	Age      int    `json:"age"`
-// 	External bool   `json:"external"`
-// }
-
-// type DoctorRecord struct {
-// 	ID         string `json:"id"`
-// 	Name       string `json:"name"`
-// 	Email      string `json:"email"`
-// 	Role       string `json:"role"`
-// 	Speciality string `json:"speciality"`
-// }
-
 type MemStore struct {
 	doctors  map[string]store.DoctorRecord
 	patients map[string]store.PatientRecord
 }
 
-// Store specific errors.
-var ErrorNextDoctorID = errors.New("failed to get next docotor ID")
-var ErrorNextPatientID = errors.New("failed to get next patient ID")
+// // Store specific errors.
+// var ErrorNextDoctorID = errors.New("failed to get next docotor ID")
+// var ErrorNextPatientID = errors.New("failed to get next patient ID")
 
-var ErrorPatientNotFound = errors.New("patient not found")
-var ErrorDoctorNotFound = errors.New("doctor not found")
+// var ErrorPatientNotFound = errors.New("patient not found")
+// var ErrorDoctorNotFound = errors.New("doctor not found")
 
-// Errors for fields validation.
-var ErrorInvalidPatientData = errors.New("invalid patient data")
-var ErrorInvalidDoctorData = errors.New("invalid doctor data")
+// // Errors for fields validation.
+// var ErrorInvalidPatientData = errors.New("invalid patient data")
+// var ErrorInvalidDoctorData = errors.New("invalid doctor data")
 
 func NewMemStore(doctors []store.DoctorRecord, patients []store.PatientRecord) *MemStore {
 	store := MemStore{
