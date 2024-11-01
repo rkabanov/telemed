@@ -1,0 +1,28 @@
+Postgres in Docker:
+
+docker pull postgres:15-alpine
+docker run --name pg15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+docker exec -it pg15 createdb --username=root --owner=root servicedb
+docker exec -it pg15 psql -U root servicedb
+
+create DB:
+create table public.doctors (
+    rowid serial primary key,
+    id text unique not null,
+    name text not null,
+    email text not null,
+    role text not null,
+    speciality text not null
+)
+
+create table public.patients (
+    rowid serial primary key,
+    id text unique not null,
+    name text not null,
+    age integer not null,
+    external boolean not null
+)
+
+
+# connect from local
+psql -h localhost -p 5433 -U root

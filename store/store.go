@@ -14,15 +14,3 @@ type DoctorRecord struct {
 	Role       string `json:"role"`
 	Speciality string `json:"speciality"`
 }
-
-type AppStore struct {
-	*PatientStore
-	*DoctorStore
-}
-
-func NewAppStore(ps *PatientStore, ds *DoctorStore) *AppStore {
-	return &AppStore{
-		PatientStore: ps,
-		DoctorStore:  ds,
-	}
-}

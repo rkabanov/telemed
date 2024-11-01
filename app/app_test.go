@@ -5,27 +5,24 @@ import (
 	"testing"
 
 	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/service/store/mem"
 	"github.com/stretchr/testify/require"
 )
 
-var docStore *store.DoctorStore
-var patStore *store.PatientStore
+var testMemStore *mem.MemStore
 
 func init() {
-	docStore = store.NewDoctorStore([]store.DoctorRecord{
-		{ID: "301", Name: "Dr. Gibbs", Email: "gibbs@yopmail.com", Role: "radiologist", Speciality: "cardiology"},
-		{ID: "302", Name: "Dr. Evans", Email: "evans@yopmail.com", Role: "admin", Speciality: ""},
-	})
-
-	patStore = store.NewPatientStore([]store.PatientRecord{
-		{ID: "30001", Name: "Nick", Age: 53, External: false},
-		{ID: "30002", Name: "Albert", Age: 42, External: false},
-		{ID: "30003", Name: "William", Age: 38, External: true},
-	})
+	testMemStore = mem.NewMemStore([]store.DoctorRecord{
+		{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
+		{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
+	},
+		[]store.PatientRecord{
+			{ID: "1", Name: "John", Age: 30, External: false},
+			{ID: "2", Name: "Mary", Age: 25, External: true},
+		})
 }
-
 func TestApp(t *testing.T) {
-	app := store.NewAppStore(patStore, docStore)
+	app := NewApp(testMemStore)
 	require.NotEmpty(t, app)
 
 	doctors, err := app.GetDoctors()
@@ -35,5 +32,5 @@ func TestApp(t *testing.T) {
 
 	patients, err := app.GetPatients()
 	require.NoError(t, err)
-	require.Equal(t, len(patients), 3)
+	require.Equal(t, len(patients), 2)
 }
