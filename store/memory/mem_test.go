@@ -1,4 +1,4 @@
-package mem
+package memory
 
 import (
 	"log"
@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testMemStore *MemStore
+var testMemStore *Store
 
 func init() {
-	testMemStore = NewMemStore([]store.DoctorRecord{
+	testMemStore = NewStore([]store.DoctorRecord{
 		{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
 		{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
 	},

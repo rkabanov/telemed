@@ -12,6 +12,8 @@ type Store interface {
 	GetDoctor(string) (store.DoctorRecord, error)
 	GetDoctors() ([]store.DoctorRecord, error)
 	CreateDoctor(store.DoctorRecord) (string, error)
+
+	Print()
 }
 
 type MedicalApp struct {

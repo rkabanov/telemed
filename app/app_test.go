@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/rkabanov/service/store"
-	"github.com/rkabanov/service/store/mem"
+	"github.com/rkabanov/service/store/memory"
 	"github.com/stretchr/testify/require"
 )
 
-var testMemStore *mem.MemStore
+var testMemStore *memory.Store
 
 func init() {
-	testMemStore = mem.NewMemStore([]store.DoctorRecord{
+	testMemStore = memory.NewStore([]store.DoctorRecord{
 		{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
 		{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
 	},

@@ -1,4 +1,4 @@
-package pgstore
+package postgres
 
 import (
 	"log"
@@ -8,17 +8,14 @@ import (
 	"github.com/rkabanov/service/store"
 )
 
-// var ErrorDoctorNotFound = errors.New("doctor not found")
-// var ErrorNextDoctorID = errors.New("failed to get next docotor ID")
-
-func (ps *PostgresStore) Print() {
+func (ps *Store) Print() {
 	// for _, d := range ps.data {
 	// 	log.Printf("print: %v", d)
 	// }
-	log.Println("PostgresStore.Print")
+	log.Println("Store.Print - TODO")
 }
 
-func (ps *PostgresStore) GetDoctor(id string) (store.DoctorRecord, error) {
+func (ps *Store) GetDoctor(id string) (store.DoctorRecord, error) {
 	query := "select id, name, email, role, speciality from doctors where id=$1 limit 1"
 	row := ps.db.QueryRow(query)
 	var d store.DoctorRecord
@@ -32,10 +29,10 @@ func (ps *PostgresStore) GetDoctor(id string) (store.DoctorRecord, error) {
 	return d, err
 }
 
-func (ps *PostgresStore) GetDoctors() ([]store.DoctorRecord, error) {
+func (ps *Store) GetDoctors() ([]store.DoctorRecord, error) {
 	query := "select id, name, email, role, speciality from doctors where id=$1 order by id"
 
-	// arg.Limit, arg.Offset
+	// arg.Limit, arg.Offset - TODO
 	rows, err := ps.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -68,8 +65,8 @@ func (ps *PostgresStore) GetDoctors() ([]store.DoctorRecord, error) {
 	return items, nil
 }
 
-func (ps *PostgresStore) CreateDoctor(d store.DoctorRecord) (string, error) {
-	log.Println("PostgresStore.CreateDoctor")
+func (ps *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
+	log.Println("Store.CreateDoctor")
 
 	var err error
 	d.ID, err = ps.NextDoctorID()
@@ -106,7 +103,7 @@ func digitizeDoctorID(id string) int {
 	return num
 }
 
-func (ps *PostgresStore) NextDoctorID() (string, error) {
+func (ps *Store) NextDoctorID() (string, error) {
 	doctors, err := ps.GetDoctors()
 	if err != nil {
 		return "", store.ErrorNextDoctorID

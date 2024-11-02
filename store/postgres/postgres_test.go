@@ -1,4 +1,4 @@
-package pgstore
+package postgres
 
 import (
 	"database/sql"
@@ -20,11 +20,10 @@ func init() {
 	if err != nil {
 		log.Fatal("failed top open DB connection")
 	}
-
 }
 
 func TestNow(t *testing.T) {
-	store := New(testDB)
+	store := NewStore(testDB)
 	now, err := store.Now()
 	require.NoError(t, err)
 

@@ -1,16 +1,16 @@
-package mem
+package memory
 
 import (
 	"fmt"
 	"log"
 	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/rkabanov/service/store"
 )
 
-func (ms *MemStore) GetDoctor(id string) (store.DoctorRecord, error) {
+func (ms *Store) GetDoctor(id string) (store.DoctorRecord, error) {
+	log.Println("GetDoctor")
 	d, ok := ms.doctors[id]
 	if !ok {
 		return store.DoctorRecord{}, store.ErrorDoctorNotFound
@@ -18,7 +18,7 @@ func (ms *MemStore) GetDoctor(id string) (store.DoctorRecord, error) {
 	return d, nil
 }
 
-func (ms *MemStore) GetDoctors() ([]store.DoctorRecord, error) {
+func (ms *Store) GetDoctors() ([]store.DoctorRecord, error) {
 	log.Println("GetDoctors: len(store.doctors)=", len(ms.doctors))
 	keys := make([]string, len(ms.doctors))
 	i := 0
@@ -37,8 +37,8 @@ func (ms *MemStore) GetDoctors() ([]store.DoctorRecord, error) {
 	return result, nil
 }
 
-func (ms *MemStore) CreateDoctor(d store.DoctorRecord) (string, error) {
-	log.Println("MemStore.CreateDoctor")
+func (ms *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
+	log.Println("Store.CreateDoctor")
 	if d.ID != "" {
 		return "", fmt.Errorf("%w: ID", store.ErrorInvalidDoctorData)
 	}
@@ -62,33 +62,11 @@ func (ms *MemStore) CreateDoctor(d store.DoctorRecord) (string, error) {
 	return d.ID, nil
 }
 
-func digitizeDoctorID(id string) int {
-	// filter digits
-	var sb strings.Builder
-	for _, r := range string(id) {
-		if r >= '0' && r <= '9' {
-			sb.WriteRune(r)
-		}
-	}
-	digits := sb.String()
-	if len(digits) == 0 {
-		return 0
-	}
-
-	// convert to number
-	num, err := strconv.Atoi(digits)
-	if err != nil {
-		return 0
-	}
-
-	return num
-}
-
-func (ms *MemStore) NextDoctorID() (string, error) {
+func (ms *Store) NextDoctorID() (string, error) {
 	// Make numeric representation of IDs.
 	maxid := 0
 	for key := range ms.doctors {
-		numID := digitizeDoctorID(key)
+		numID := store.ExtractNumberFromString(key)
 		if numID > maxid {
 			maxid = numID
 		}

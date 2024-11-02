@@ -2,6 +2,8 @@ package store
 
 import (
 	"errors"
+	"strconv"
+	"strings"
 )
 
 type PatientRecord struct {
@@ -29,3 +31,26 @@ var ErrorDoctorNotFound = errors.New("doctor not found")
 // Errors for fields validation.
 var ErrorInvalidPatientData = errors.New("invalid patient data")
 var ErrorInvalidDoctorData = errors.New("invalid doctor data")
+
+// extractNumberFromID is an utility function.
+func ExtractNumberFromString(id string) int {
+	// filter digits
+	var sb strings.Builder
+	for _, r := range string(id) {
+		if r >= '0' && r <= '9' {
+			sb.WriteRune(r)
+		}
+	}
+	digits := sb.String()
+	if len(digits) == 0 {
+		return 0
+	}
+
+	// convert to number
+	num, err := strconv.Atoi(digits)
+	if err != nil {
+		return 0
+	}
+
+	return num
+}

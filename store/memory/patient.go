@@ -1,4 +1,4 @@
-package mem
+package memory
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/rkabanov/service/store"
 )
 
-func (ms *MemStore) GetPatient(id string) (store.PatientRecord, error) {
+func (ms *Store) GetPatient(id string) (store.PatientRecord, error) {
 	p, ok := ms.patients[id]
 	if !ok {
 		return store.PatientRecord{}, store.ErrorPatientNotFound
@@ -17,7 +17,7 @@ func (ms *MemStore) GetPatient(id string) (store.PatientRecord, error) {
 	return p, nil
 }
 
-func (ms *MemStore) GetPatients() ([]store.PatientRecord, error) {
+func (ms *Store) GetPatients() ([]store.PatientRecord, error) {
 	keys := make([]string, len(ms.patients))
 	i := 0
 	for key := range ms.patients {
@@ -35,8 +35,8 @@ func (ms *MemStore) GetPatients() ([]store.PatientRecord, error) {
 	return result, nil
 }
 
-func (ms *MemStore) CreatePatient(p store.PatientRecord) (string, error) {
-	log.Println("MemStore.CreatePatient")
+func (ms *Store) CreatePatient(p store.PatientRecord) (string, error) {
+	log.Println("Store.CreatePatient")
 	if p.ID != "" {
 		return "", fmt.Errorf("%w: ID", store.ErrorInvalidPatientData)
 	}
@@ -57,11 +57,11 @@ func (ms *MemStore) CreatePatient(p store.PatientRecord) (string, error) {
 	return p.ID, nil
 }
 
-func (ms *MemStore) NextPatientID() (string, error) {
+func (ms *Store) NextPatientID() (string, error) {
 	// Make numeric representation of IDs.
 	maxid := 0
 	for key := range ms.patients {
-		numID := extractNumberFromID(key)
+		numID := store.ExtractNumberFromString(key)
 		if numID > maxid {
 			maxid = numID
 		}
