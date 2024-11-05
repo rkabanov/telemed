@@ -28,6 +28,11 @@ var ErrorInvalidDoctorData = errors.New("invalid doctor data")
 func (app *MedicalApp) GetDoctor(id DoctorID) (Doctor, error) {
 	log.Printf("MedicalApp.GetDoctor %v", id)
 	d, err := app.store.GetDoctor(string(id))
+
+	if err == store.ErrorDoctorNotFound {
+		return Doctor{}, ErrorDoctorNotFound
+	}
+
 	if err != nil {
 		return Doctor{}, fmt.Errorf("MedicalApp.GetDoctor failed: %w", err)
 	}
@@ -44,6 +49,11 @@ func (app *MedicalApp) GetDoctor(id DoctorID) (Doctor, error) {
 func (app *MedicalApp) GetDoctors() ([]Doctor, error) {
 	log.Printf("MedicalApp.GetDoctors")
 	list, err := app.store.GetDoctors()
+
+	if err == store.ErrorDoctorNotFound {
+		return []Doctor{}, store.ErrorDoctorNotFound
+	}
+
 	if err != nil {
 		return []Doctor{}, fmt.Errorf("MedicalApp.GetDoctors failed: %w", err)
 	}

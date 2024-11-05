@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"log"
 	"strconv"
 
@@ -25,11 +26,16 @@ func (ps *Store) GetDoctor(id string) (store.DoctorRecord, error) {
 		&d.Role,
 		&d.Speciality,
 	)
+
+	if err == sql.ErrNoRows {
+		return store.DoctorRecord{}, store.ErrorDoctorNotFound
+	}
+
 	return d, err
 }
 
 func (ps *Store) GetDoctors() ([]store.DoctorRecord, error) {
-	query := "select id, name, email, role, speciality from doctors where id=$1 order by id"
+	query := "select id, name, email, role, speciality from doctors order by id"
 
 	// arg.Limit, arg.Offset - TODO
 	rows, err := ps.db.Query(query)
@@ -79,28 +85,6 @@ func (ps *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
 	err = row.Scan(&d.ID)
 	return d.ID, err
 }
-
-// func digitizeDoctorID(id string) int {
-// 	// filter digits
-// 	var sb strings.Builder
-// 	for _, r := range string(id) {
-// 		if r >= '0' && r <= '9' {
-// 			sb.WriteRune(r)
-// 		}
-// 	}
-// 	digits := sb.String()
-// 	if len(digits) == 0 {
-// 		return 0
-// 	}
-
-// 	// convert to number
-// 	num, err := strconv.Atoi(digits)
-// 	if err != nil {
-// 		return 0
-// 	}
-
-// 	return num
-// }
 
 func (ps *Store) NextDoctorID() (string, error) {
 	doctors, err := ps.GetDoctors()

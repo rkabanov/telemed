@@ -20,7 +20,7 @@ run:
 run-pg:
 	rm -f build/*
 	CGO_ENABLED=0 go build -ldflags '-X "main.buildDate=${shell date +%Y%m%d.%H%M%S}"' -o build/service
-	build/service -store=postgres -pghost=localhost -pgport=5433 -pguser=root -pgpass=secret -pgdb=service
+	build/service -store=postgres -pghost=localhost -pgport=5433 -pguser=root -pgpass=secret -pgdb=servicedb
 
 deploy:
 	tar zcvf build/service-build.tgz -C build -- service

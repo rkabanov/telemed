@@ -22,6 +22,11 @@ var ErrorPatientNotFound = errors.New("patient not found")
 
 func (app *MedicalApp) GetPatient(id PatientID) (Patient, error) {
 	p, err := app.store.GetPatient(string(id))
+
+	if err == store.ErrorPatientNotFound {
+		return Patient{}, ErrorPatientNotFound
+	}
+
 	if err != nil {
 		return Patient{}, fmt.Errorf("MedicalApp.GetPatient failed: %w", err)
 	}

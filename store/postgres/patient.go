@@ -11,7 +11,7 @@ import (
 
 func (ps *Store) GetPatient(id string) (store.PatientRecord, error) {
 	log.Println("Store.GetPatient")
-	query := "select id, name, age, external from patient where id=$1"
+	query := "select id, name, age, external from patients where id=$1 limit 1"
 	var p store.PatientRecord
 	row := ps.db.QueryRow(query, id)
 	err := row.Scan(&p.ID,
