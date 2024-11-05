@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/lib/pq"
 	"github.com/rkabanov/service/app"
 	"github.com/rkabanov/service/store"
 	"github.com/rkabanov/service/store/memory"
@@ -17,37 +18,37 @@ import (
 var buildDate string
 
 type programArgs struct {
-	store  string
-	pghost string
-	pgport int
-	pguser string
-	pgpass string
-	pgdb   string
-	port   string
+	store  *string
+	pghost *string
+	pgport *int
+	pguser *string
+	pgpass *string
+	pgdb   *string
 }
 
 func main() {
 	log.Println("start, build:", buildDate)
 
 	var args programArgs
-	args.store = *flag.String("store", "memory", "service store type: memory or postgres")
-	args.pghost = *flag.String("pghost", "localhost", "postgres host")
-	args.pgport = *flag.Int("pgport", 5432, "postgres port")
-	args.pguser = *flag.String("pguser", "root", "postgres user")
-	args.pgpass = *flag.String("pgpass", "secret", "postgres password")
-	args.pgdb = *flag.String("pgdb", "service", "postgres DB")
+	args.store = flag.String("store", "memory", "service store type: memory or postgres")
+	args.pghost = flag.String("pghost", "localhost", "postgres host")
+	args.pgport = flag.Int("pgport", 5432, "postgres port")
+	args.pguser = flag.String("pguser", "root", "postgres user")
+	args.pgpass = flag.String("pgpass", "secret", "postgres password")
+	args.pgdb = flag.String("pgdb", "service", "postgres DB")
 	//	var source = "postgresql://root:secret@localhost:5433/simple_bank?sslmode=disable"
-
 	flag.Parse()
+	fmt.Println("using store1", *args.store)
+	fmt.Println("pghost:", *args.pghost)
 
 	var store app.Store
-	switch args.store {
+	switch *args.store {
 	case "memory":
 		store = getMemoryStore()
 	case "postgres":
-		store = getPostgresStore(&args)
+		store = getPostgresStore(args)
 	default:
-		log.Fatal("store type '%v' not supported, exit", args.store)
+		log.Fatalf("store type '%v' not supported, exit", args.store)
 	}
 	store.Print()
 
@@ -79,21 +80,26 @@ func getMemoryStore() *memory.Store {
 		})
 }
 
-func getPostgresStore(args *programArgs) *postgres.Store {
+func getPostgresStore(args programArgs) *postgres.Store {
 	var driver = "postgres"
 	//	var source = "postgresql://root:secret@localhost:5433/simple_bank?sslmode=disable"
 	source := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable",
-		args.pguser,
-		args.pgpass,
-		args.pghost,
-		args.pgport,
-		args.pgdb,
+		*args.pguser,
+		*args.pgpass,
+		*args.pghost,
+		*args.pgport,
+		*args.pgdb,
 	)
 	log.Println("getPostgresStore: source:", source)
 
 	db, err := sql.Open(driver, source)
 	if err != nil {
-		log.Fatal("failed to open DB connection")
+		log.Fatalf("failed to open DB connection: %v", err)
+	}
+	err = db.Ping()
+
+	if err != nil {
+		log.Fatalf("failed to ping DB: %v", err)
 	}
 
 	return postgres.NewStore(db)

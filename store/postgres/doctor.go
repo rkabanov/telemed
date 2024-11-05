@@ -3,7 +3,6 @@ package postgres
 import (
 	"log"
 	"strconv"
-	"strings"
 
 	"github.com/rkabanov/service/store"
 )
@@ -17,7 +16,7 @@ func (ps *Store) Print() {
 
 func (ps *Store) GetDoctor(id string) (store.DoctorRecord, error) {
 	query := "select id, name, email, role, speciality from doctors where id=$1 limit 1"
-	row := ps.db.QueryRow(query)
+	row := ps.db.QueryRow(query, id)
 	var d store.DoctorRecord
 	err := row.Scan(
 		&d.ID,
@@ -81,27 +80,27 @@ func (ps *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
 	return d.ID, err
 }
 
-func digitizeDoctorID(id string) int {
-	// filter digits
-	var sb strings.Builder
-	for _, r := range string(id) {
-		if r >= '0' && r <= '9' {
-			sb.WriteRune(r)
-		}
-	}
-	digits := sb.String()
-	if len(digits) == 0 {
-		return 0
-	}
+// func digitizeDoctorID(id string) int {
+// 	// filter digits
+// 	var sb strings.Builder
+// 	for _, r := range string(id) {
+// 		if r >= '0' && r <= '9' {
+// 			sb.WriteRune(r)
+// 		}
+// 	}
+// 	digits := sb.String()
+// 	if len(digits) == 0 {
+// 		return 0
+// 	}
 
-	// convert to number
-	num, err := strconv.Atoi(digits)
-	if err != nil {
-		return 0
-	}
+// 	// convert to number
+// 	num, err := strconv.Atoi(digits)
+// 	if err != nil {
+// 		return 0
+// 	}
 
-	return num
-}
+// 	return num
+// }
 
 func (ps *Store) NextDoctorID() (string, error) {
 	doctors, err := ps.GetDoctors()
@@ -112,7 +111,7 @@ func (ps *Store) NextDoctorID() (string, error) {
 	// Make numeric representation of IDs.
 	maxid := 0
 	for _, d := range doctors {
-		numID := digitizeDoctorID(d.ID)
+		numID := store.ExtractNumberFromString(d.ID)
 		if numID > maxid {
 			maxid = numID
 		}
