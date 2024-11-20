@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	driver     = "postgres"
-	source     = "postgresql://root:secret@localhost:5433/servicedb?sslmode=disable"
-	testStore  *Store
-	testDoctor store.DoctorRecord
+	driver      = "postgres"
+	source      = "postgresql://root:secret@localhost:5433/servicedb?sslmode=disable"
+	testStore   *Store
+	testDoctor  store.DoctorRecord
+	testPatient store.PatientRecord
 )
 
 func init() {
@@ -33,6 +34,13 @@ func init() {
 		Email:      "dm@yopmail.com",
 		Role:       "radiologist",
 		Speciality: "cardiology",
+	}
+
+	testPatient = store.PatientRecord{
+		ID:       "",
+		Name:     "Chuck Brown",
+		Age:      30,
+		External: false,
 	}
 }
 
@@ -61,4 +69,40 @@ func TestGetDoctor(t *testing.T) {
 	require.Equal(t, testDoctor.Email, d.Email)
 	require.Equal(t, testDoctor.Role, d.Role)
 	require.Equal(t, testDoctor.Speciality, d.Speciality)
+}
+
+func TestGetDoctors(t *testing.T) {
+	fmt.Println("TestGetDoctor")
+	list, err := testStore.GetDoctors()
+	require.NoError(t, err)
+	require.NotEmpty(t, list)
+	require.Greater(t, len(list), 0)
+}
+
+func TestCreatePatient(t *testing.T) {
+	fmt.Println("TestCreatePatient")
+	var err error
+	testPatient.ID, err = testStore.CreatePatient(testPatient)
+	require.NoError(t, err)
+	require.NotEmpty(t, testPatient.ID)
+	require.NotEqual(t, "", testPatient.ID)
+}
+
+func TestGetPatient(t *testing.T) {
+	fmt.Println("TestGetPatient")
+	p, err := testStore.GetPatient(testPatient.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, p)
+	require.Equal(t, testPatient.ID, p.ID)
+	require.Equal(t, testPatient.Name, p.Name)
+	require.Equal(t, testPatient.Age, p.Age)
+	require.Equal(t, testPatient.External, p.External)
+}
+
+func TestGetPatients(t *testing.T) {
+	fmt.Println("TestGetPatients")
+	list, err := testStore.GetPatients()
+	require.NoError(t, err)
+	require.NotEmpty(t, list)
+	require.Greater(t, len(list), 0)
 }

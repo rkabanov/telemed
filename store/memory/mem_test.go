@@ -11,14 +11,16 @@ import (
 var testMemStore *Store
 
 func init() {
-	testMemStore = NewStore([]store.DoctorRecord{
-		{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
-		{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
-	},
+	testMemStore = NewStore(
+		[]store.DoctorRecord{
+			{ID: "11", Name: "Dr. John", Email: "john@yopmail.com", Role: "radiologist", Speciality: "neurology"},
+			{ID: "22", Name: "Dr. Mary", Email: "mary@yopmail.com", Role: "admin", Speciality: "admin"},
+		},
 		[]store.PatientRecord{
 			{ID: "1", Name: "John", Age: 30, External: false},
 			{ID: "2", Name: "Mary", Age: 25, External: true},
-		})
+		},
+	)
 }
 
 func TestNextDoctorID(t *testing.T) {

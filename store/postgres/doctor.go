@@ -8,16 +8,27 @@ import (
 	"github.com/rkabanov/service/store"
 )
 
-func (ps *Store) Print() {
-	// for _, d := range ps.data {
-	// 	log.Printf("print: %v", d)
-	// }
-	log.Println("Store.Print - TODO")
+func (s *Store) Print() {
+	doctors, err := s.GetDoctors()
+	if err != nil {
+		log.Println("Print: failed to get dostors:", err)
+	}
+	for i, d := range doctors {
+		log.Printf("\tdoctor [%v]: %v\n", i, d)
+	}
+
+	patients, err := s.GetPatients()
+	if err != nil {
+		log.Println("Print: failed to get patients:", err)
+	}
+	for i, p := range patients {
+		log.Printf("\tpatient [%v]: %v\n", i, p)
+	}
 }
 
-func (ps *Store) GetDoctor(id string) (store.DoctorRecord, error) {
+func (s *Store) GetDoctor(id string) (store.DoctorRecord, error) {
 	query := "select id, name, email, role, speciality from doctors where id=$1 limit 1"
-	row := ps.db.QueryRow(query, id)
+	row := s.db.QueryRow(query, id)
 	var d store.DoctorRecord
 	err := row.Scan(
 		&d.ID,
@@ -34,11 +45,11 @@ func (ps *Store) GetDoctor(id string) (store.DoctorRecord, error) {
 	return d, err
 }
 
-func (ps *Store) GetDoctors() ([]store.DoctorRecord, error) {
+func (s *Store) GetDoctors() ([]store.DoctorRecord, error) {
 	query := "select id, name, email, role, speciality from doctors order by id"
 
 	// arg.Limit, arg.Offset - TODO
-	rows, err := ps.db.Query(query)
+	rows, err := s.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -70,24 +81,24 @@ func (ps *Store) GetDoctors() ([]store.DoctorRecord, error) {
 	return items, nil
 }
 
-func (ps *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
+func (s *Store) CreateDoctor(d store.DoctorRecord) (string, error) {
 	log.Println("Store.CreateDoctor")
 
 	var err error
-	d.ID, err = ps.NextDoctorID()
+	d.ID, err = s.NextDoctorID()
 	if err != nil {
 		return "", err
 	}
 
 	query := `insert into doctors(id, name, email, role, speciality)
 	values ($1, $2, $3, $4, $5) returning id`
-	row := ps.db.QueryRow(query, d.ID, d.Name, d.Email, d.Role, d.Speciality)
+	row := s.db.QueryRow(query, d.ID, d.Name, d.Email, d.Role, d.Speciality)
 	err = row.Scan(&d.ID)
 	return d.ID, err
 }
 
-func (ps *Store) NextDoctorID() (string, error) {
-	doctors, err := ps.GetDoctors()
+func (s *Store) NextDoctorID() (string, error) {
+	doctors, err := s.GetDoctors()
 	if err != nil {
 		return "", store.ErrorNextDoctorID
 	}
