@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	_ "github.com/lib/pq"
 	"github.com/rkabanov/service/app"
@@ -18,12 +20,14 @@ import (
 var buildDate string
 
 type programArgs struct {
-	store  *string
-	pghost *string
-	pgport *int
-	pguser *string
-	pgpass *string
-	pgdb   *string
+	store   *string
+	pghost  *string
+	pgport  *int
+	pguser  *string
+	pgpass  *string
+	pgdb    *string
+	webpath *string
+	webport *int
 }
 
 func main() {
@@ -36,6 +40,8 @@ func main() {
 	args.pguser = flag.String("pguser", "root", "postgres user")
 	args.pgpass = flag.String("pgpass", "secret", "postgres password")
 	args.pgdb = flag.String("pgdb", "service", "postgres DB")
+	args.webpath = flag.String("webpath", "", "web app URL path")
+	args.webport = flag.Int("webport", 8180, "web app port")
 	//	var source = "postgresql://root:secret@localhost:5433/simple_bank?sslmode=disable"
 	flag.Parse()
 	fmt.Println("using store1", *args.store)
@@ -56,11 +62,19 @@ func main() {
 
 	web := web.NewWebAPI(app) // Web API for the app - depends on business logic.
 
-	http.HandleFunc("/patient", web.HandlePatient) // GET and POST
-	http.HandleFunc("/patients", web.GetPatients)
-	http.HandleFunc("/doctor", web.HandleDoctor) // GET and POST
-	http.HandleFunc("/doctors", web.GetDoctors)
-	log.Println(http.ListenAndServe(":8180", nil))
+	var sb strings.Builder
+	if *args.webpath != "" {
+		sb.WriteString("/")
+		sb.WriteString(*args.webpath)
+	}
+	path := sb.String()
+	fmt.Println("Listen on path:", path, ", port:", *args.webport)
+
+	http.HandleFunc(path+"/patient", web.HandlePatient) // GET and POST
+	http.HandleFunc(path+"/patients", web.GetPatients)
+	http.HandleFunc(path+"/doctor", web.HandleDoctor) // GET and POST
+	http.HandleFunc(path+"/doctors", web.GetDoctors)
+	log.Println(http.ListenAndServe(":"+strconv.Itoa(*args.webport), nil))
 
 	log.Println("finish")
 }

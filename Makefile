@@ -12,7 +12,7 @@ psql:
 
 build:
 	rm -f build/*
-	CGO_ENAB/LED=0 go build -ldflags '-X "main.buildDate=${shell date +%Y%m%d.%H%M%S}"' -o build/service
+	CGO_ENABLED=0 go build -ldflags '-X "main.buildDate=${shell date +%Y%m%d.%H%M%S}"' -o build/service
 
 run:
 	go run .
@@ -20,7 +20,12 @@ run:
 run-pg:
 	rm -f build/*
 	CGO_ENABLED=0 go build -ldflags '-X "main.buildDate=${shell date +%Y%m%d.%H%M%S}"' -o build/service
-	build/service -store=postgres -pghost=localhost -pgport=5433 -pguser=root -pgpass=secret -pgdb=servicedb
+	build/service -store=postgres -pghost=localhost -pgport=5433 -pguser=root -pgpass=secret -pgdb=servicedb \
+		-webpath=telemed -webport=8133
+
+upload:
+	tar zcvf build/service-build.tgz -C build -- service
+	scp build/service-build.tgz deploy1@192.3.120.10:/tmp
 
 deploy:
 	tar zcvf build/service-build.tgz -C build -- service
