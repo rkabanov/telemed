@@ -52,7 +52,7 @@ func TestNow(t *testing.T) {
 }
 
 func TestCreateDoctor(t *testing.T) {
-	fmt.Println("TestCreateDoctor")
+	log.Println(">>>>>>>>>>>>>>>>>>>> PG: TestCreateDoctor")
 	var err error
 	testDoctor.ID, err = testStore.CreateDoctor(testDoctor)
 	require.NoError(t, err)
@@ -72,7 +72,7 @@ func TestGetDoctor(t *testing.T) {
 }
 
 func TestGetDoctors(t *testing.T) {
-	fmt.Println("TestGetDoctor")
+	fmt.Println("TestGetDoctors")
 	list, err := testStore.GetDoctors()
 	require.NoError(t, err)
 	require.NotEmpty(t, list)
@@ -80,7 +80,7 @@ func TestGetDoctors(t *testing.T) {
 }
 
 func TestCreatePatient(t *testing.T) {
-	fmt.Println("TestCreatePatient")
+	log.Println(">>>>>>>>>>>>>>>>>>>> PG: TestCreatePatient")
 	var err error
 	testPatient.ID, err = testStore.CreatePatient(testPatient)
 	require.NoError(t, err)

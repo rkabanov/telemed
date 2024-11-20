@@ -93,14 +93,14 @@ func (s *Store) CreatePatient(p store.PatientRecord) (string, error) {
 }
 
 func (s *Store) NextPatientID() (string, error) {
-	doctors, err := s.GetPatients()
+	patients, err := s.GetPatients()
 	if err != nil {
 		return "", store.ErrorNextPatientID
 	}
 
 	// Make numeric representation of IDs.
 	maxid := 0
-	for _, d := range doctors {
+	for _, d := range patients {
 		numID := store.ExtractNumberFromString(d.ID)
 		if numID > maxid {
 			maxid = numID

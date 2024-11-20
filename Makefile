@@ -4,8 +4,11 @@ clean:
 createdb:
 	docker exec -it pg15 createdb --username=root --owner=root servicedb
 
-tables:
+tables-create:
 	cat ./migrate/servicedb.sql | docker exec -i pg15 psql -U root servicedb
+
+tables-truncate:
+	docker exec -i pg15 psql -U root servicedb -c 'truncate table doctors; truncate table patients;'
 
 psql:
 	docker exec -i pg15 psql servicedb root
@@ -35,6 +38,4 @@ deploy:
 test:
 	go test -v --cover ./...
 
-.PHONY: clean createdb tables build run-mem run-pg deploy test
-
-
+.PHONY: clean createdb tables-create tables-truncate build run-mem run-pg deploy test
