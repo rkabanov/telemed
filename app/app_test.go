@@ -4,8 +4,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/rkabanov/service/store"
-	"github.com/rkabanov/service/store/memory"
+	"github.com/rkabanov/telemed/store"
+	"github.com/rkabanov/telemed/store/memory"
 	"github.com/stretchr/testify/require"
 )
 

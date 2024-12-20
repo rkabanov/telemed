@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/rkabanov/service/app"
+	"github.com/rkabanov/telemed/app"
 )
 
 type App interface {

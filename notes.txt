@@ -2,8 +2,8 @@ Postgres in Docker:
 
 docker pull postgres:15-alpine
 docker run --name pg15 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
-docker exec -it pg15 createdb --username=root --owner=root servicedb
-docker exec -it pg15 psql -U root servicedb
+docker exec -it pg15 createdb --username=root --owner=root telemeddb
+docker exec -it pg15 psql -U root telemeddb
 
 create DB:
 create table public.doctors (

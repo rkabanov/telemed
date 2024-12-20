@@ -4,7 +4,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 	"github.com/stretchr/testify/require"
 )
 

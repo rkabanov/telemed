@@ -7,14 +7,14 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 
 	"github.com/stretchr/testify/require"
 )
 
 var (
 	driver      = "postgres"
-	source      = "postgresql://root:secret@localhost:5433/servicedb?sslmode=disable"
+	source      = "postgresql://root:secret@localhost:5433/telemeddb?sslmode=disable"
 	testStore   *Store
 	testDoctor  store.DoctorRecord
 	testPatient store.PatientRecord

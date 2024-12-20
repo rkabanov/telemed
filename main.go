@@ -10,11 +10,11 @@ import (
 	"strings"
 
 	_ "github.com/lib/pq"
-	"github.com/rkabanov/service/app"
-	"github.com/rkabanov/service/store"
-	"github.com/rkabanov/service/store/memory"
-	"github.com/rkabanov/service/store/postgres"
-	"github.com/rkabanov/service/web"
+	"github.com/rkabanov/telemed/app"
+	"github.com/rkabanov/telemed/store"
+	"github.com/rkabanov/telemed/store/memory"
+	"github.com/rkabanov/telemed/store/postgres"
+	"github.com/rkabanov/telemed/web"
 )
 
 var buildDate string
@@ -39,7 +39,7 @@ func main() {
 	args.pgport = flag.Int("pgport", 5432, "postgres port")
 	args.pguser = flag.String("pguser", "root", "postgres user")
 	args.pgpass = flag.String("pgpass", "secret", "postgres password")
-	args.pgdb = flag.String("pgdb", "service", "postgres DB")
+	args.pgdb = flag.String("pgdb", "telemed", "postgres DB")
 	args.webpath = flag.String("webpath", "", "web app URL path")
 	args.webport = flag.Int("webport", 8180, "web app port")
 	//	var source = "postgresql://root:secret@localhost:5433/simple_bank?sslmode=disable"

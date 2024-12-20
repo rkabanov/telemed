@@ -4,7 +4,7 @@ import (
 	// "errors"
 	"log"
 
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 )
 
 type Store struct {

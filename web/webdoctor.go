@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rkabanov/service/app"
+	"github.com/rkabanov/telemed/app"
 )
 
 func (wa *WebAPI) HandleDoctor(w http.ResponseWriter, r *http.Request) {

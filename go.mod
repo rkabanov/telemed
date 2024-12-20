@@ -1,4 +1,4 @@
-module github.com/rkabanov/service
+module github.com/rkabanov/telemed
 
 go 1.23.2
 

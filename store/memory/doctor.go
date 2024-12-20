@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 )
 
 func (ms *Store) GetDoctor(id string) (store.DoctorRecord, error) {

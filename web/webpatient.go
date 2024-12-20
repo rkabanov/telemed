@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/rkabanov/service/app"
+	"github.com/rkabanov/telemed/app"
 )
 
 func (wa *WebAPI) HandlePatient(w http.ResponseWriter, r *http.Request) {

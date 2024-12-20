@@ -6,7 +6,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 )
 
 func (s *Store) GetPatient(id string) (store.PatientRecord, error) {

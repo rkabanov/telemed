@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/rkabanov/service/store"
+	"github.com/rkabanov/telemed/store"
 )
 
 type Store interface {
