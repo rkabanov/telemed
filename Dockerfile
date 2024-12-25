@@ -31,5 +31,6 @@ COPY --from=base /main .
 
 USER small-user:small-user
 
+EXPOSE 8180
+
 ENTRYPOINT ["./main"]
-#CMD ["./main"]
